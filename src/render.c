@@ -80,9 +80,6 @@ int igniRndMeshCreate(
 	meshCreate->cmd.pathLen = strlen(meshCreate->cmd.path);
 	size_t meshCreateSz = sizeof(*meshCreate) + meshCreate->cmd.pathLen;
 
-	printf("PATHLEN %i\n", meshCreate->cmd.pathLen);
-	printf("loading mesh %s\n", meshCreate->cmd.path);
-
 	int sendResult = send(fd, meshCreate, meshCreateSz, 0);
 
 	free(meshCreate);
@@ -330,8 +327,6 @@ int igniRndTextureCreate(
 	}
 	createTex->cmd.pathLen = strlen(createTex->cmd.path);
 	size_t texCreateSz = sizeof(*createTex) + createTex->cmd.pathLen;
-
-	printf("loading texture %s\n", createTex->cmd.path);
 
 	int sendResult = send(fd, createTex, texCreateSz, 0);
 
