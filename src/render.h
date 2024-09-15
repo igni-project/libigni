@@ -40,8 +40,8 @@ enum {
 /// \note
 /// - No two elements of matching type within a scene can share the same ID. 
 ///
-typedef int32_t IgniRndElementId;
-#define IGNI_NULL_ELEMENT -1
+typedef uint32_t IgniRndElementId;
+#define IGNI_RENDER_NULL_ELEMENT -1
 
 /// 
 /// @brief Shading mode

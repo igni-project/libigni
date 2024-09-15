@@ -1,11 +1,9 @@
 #include "render.h"
-#include <stdio.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <sys/un.h>
-#include <stdlib.h>
-#include <linux/limits.h>
-
+#include <stdio.h> 			/* printf(), perror() */
+#include <sys/socket.h> 	/* send() */
+#include <sys/un.h>			/* sockaddr_un */
+#include <stdlib.h> 		/* getenv(), malloc(), free() */
+#include <linux/limits.h> 	/* PATH_MAX */
 
 int igniRndOpen()
 {
@@ -29,12 +27,12 @@ int igniRndOpen()
 
 	/* The new connection tells the server about itself. */
 
-	struct ConfigureCmd_t {
+	struct ConfigureCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdConfigure cmd;
 	};
 
-	struct ConfigureCmd_t configureCmd = {};
+	struct ConfigureCmd configureCmd = {};
 	configureCmd.opcode = IGNI_RENDER_OP_CONFIGURE;
 	configureCmd.cmd.majVersion = 0;
 
@@ -59,7 +57,7 @@ int igniRndMeshCreate(
 	const char* path
 )
 {
-	struct MeshCreateCmd_t {
+	struct MeshCreateCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdMeshCreate cmd;
 	};
@@ -67,8 +65,8 @@ int igniRndMeshCreate(
 	/* PATH_MAX could be some crazy large number so it's best to store this
 	 * on the stack. */
 
-	struct MeshCreateCmd_t* meshCreate;
-	meshCreate = malloc(sizeof(struct MeshCreateCmd_t) + PATH_MAX);
+	struct MeshCreateCmd* meshCreate;
+	meshCreate = malloc(sizeof(struct MeshCreateCmd) + PATH_MAX);
 
 	meshCreate->opcode = IGNI_RENDER_OP_MESH_CREATE;
 	meshCreate->cmd.meshId = id;
@@ -99,12 +97,12 @@ int igniRndMeshSetShader(
 	IgniRndShader shader
 )
 {
-	struct MeshSetShaderCmd_t {
+	struct MeshSetShaderCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdMeshSetShader cmd;
 	};
 
-	struct MeshSetShaderCmd_t meshSetShader = {};
+	struct MeshSetShaderCmd meshSetShader = {};
 	meshSetShader.opcode = IGNI_RENDER_OP_MESH_SET_SHADER;
 	meshSetShader.cmd.meshId = id;
 	meshSetShader.cmd.shader = shader;
@@ -125,12 +123,12 @@ int igniRndMeshBindTexture(
 	IgniRndTextureTarget target
 )
 {
-	struct MeshBindTextureCmd_t {
+	struct MeshBindTextureCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdMeshBindTexture cmd;
 	};
 
-	struct MeshBindTextureCmd_t meshBindTexture = {};
+	struct MeshBindTextureCmd meshBindTexture = {};
 	meshBindTexture.opcode = IGNI_RENDER_OP_MESH_BIND_TEXTURE;
 	meshBindTexture.cmd.textureId = texId;
 	meshBindTexture.cmd.meshId = meshId;
@@ -150,12 +148,12 @@ int igniRndMeshTransform(
 	IgniTransform tf
 )
 {
-	struct MeshTransformCmd_t {
+	struct MeshTransformCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdMeshTransform cmd;
 	};
 
-	struct MeshTransformCmd_t meshTransform = {};
+	struct MeshTransformCmd meshTransform = {};
 	meshTransform.opcode = IGNI_RENDER_OP_MESH_TRANSFORM;
 	meshTransform.cmd.meshId = id;
 
@@ -185,12 +183,12 @@ int igniRndMeshDelete(
 	IgniRndElementId id
 )
 {
-	struct MeshDeleteCmd_t {
+	struct MeshDeleteCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdMeshDelete cmd;
 	};
 
-	struct MeshDeleteCmd_t meshDelete = {};
+	struct MeshDeleteCmd meshDelete = {};
 	meshDelete.opcode = IGNI_RENDER_OP_MESH_DELETE;
 	meshDelete.cmd.meshId = id;
 
@@ -208,12 +206,12 @@ int igniRndPointLightCreate(
 	IgniRndElementId id
 )
 {
-	struct PointLightCreateCmd_t {
+	struct PointLightCreateCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdPointLightCreate cmd;
 	};
 
-	struct PointLightCreateCmd_t pointLightCreate = {};
+	struct PointLightCreateCmd pointLightCreate = {};
 	pointLightCreate.opcode = IGNI_RENDER_OP_POINT_LIGHT_CREATE;
 	pointLightCreate.cmd.pointLightId = id;
 
@@ -232,12 +230,12 @@ int igniRndPointLightTransform(
 	IgniVec3 tf
 )
 {
-	struct PointLightTransformCmd_t {
+	struct PointLightTransformCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdPointLightTransform cmd;
 	};
 
-	struct PointLightTransformCmd_t pointLightTransform = {};
+	struct PointLightTransformCmd pointLightTransform = {};
 	pointLightTransform.opcode = IGNI_RENDER_OP_POINT_LIGHT_TRANSFORM;
 	pointLightTransform.cmd.pointLightId = id;
 	pointLightTransform.cmd.xLoc = tf.x;
@@ -259,12 +257,12 @@ int igniRndPointLightSetColour(
 	IgniVec3 colour
 )
 {
-	struct PointLightSetColour_t {
+	struct PointLightSetColour {
 		IgniRndOpcode opcode;
 		IgniRndCmdPointLightSetColour cmd;
 	};
 
-	struct PointLightSetColour_t pointLightSetColour = {};
+	struct PointLightSetColour pointLightSetColour = {};
 	pointLightSetColour.opcode = IGNI_RENDER_OP_POINT_LIGHT_SET_COLOUR;
 	pointLightSetColour.cmd.pointLightId = id;
 	pointLightSetColour.cmd.r = colour.r;
@@ -285,12 +283,12 @@ int igniRndPointLightDelete(
 	IgniRndElementId id
 )
 {
-	struct PointLightDeleteCmd_t {
+	struct PointLightDeleteCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdPointLightDelete cmd;
 	};
 	
-	struct PointLightDeleteCmd_t pointLightDelete = {};
+	struct PointLightDeleteCmd pointLightDelete = {};
 	pointLightDelete.opcode = IGNI_RENDER_OP_POINT_LIGHT_DELETE;
 	pointLightDelete.cmd.pointLightId = id;
 
@@ -309,13 +307,13 @@ int igniRndTextureCreate(
 	const char* path
 )
 {
-	struct createTextureCmd_t {
+	struct createTextureCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdTextureCreate cmd;
 	};
 
-	struct createTextureCmd_t* createTex;
-	createTex = malloc(sizeof(struct createTextureCmd_t) + PATH_MAX);
+	struct createTextureCmd* createTex;
+	createTex = malloc(sizeof(struct createTextureCmd) + PATH_MAX);
 
 	createTex->opcode = IGNI_RENDER_OP_TEXTURE_CREATE;
 	createTex->cmd.textureId = id;
@@ -346,12 +344,12 @@ int igniRndTextureDelete(
 	IgniRndElementId id
 )
 {
-	struct deleteTextureCmd_t {
+	struct deleteTextureCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdTextureDelete cmd;
 	};
 
-	struct deleteTextureCmd_t deleteTex = {};
+	struct deleteTextureCmd deleteTex = {};
 	deleteTex.opcode = IGNI_RENDER_OP_TEXTURE_DELETE;
 	deleteTex.cmd.textureId = id;
 
@@ -370,12 +368,12 @@ int igniRndViewpointTransform(
 	float fov
 )
 {
-	struct tfViewpointCmd_t {
+	struct tfViewpointCmd {
 		IgniRndOpcode opcode;
 		IgniRndCmdViewpointTransform cmd;
 	};
 
-	struct tfViewpointCmd_t tfViewpoint = {};
+	struct tfViewpointCmd tfViewpoint = {};
 	tfViewpoint.opcode = IGNI_RENDER_OP_VIEWPOINT_TRANSFORM;	
 	tfViewpoint.cmd.fov = fov;
 	
